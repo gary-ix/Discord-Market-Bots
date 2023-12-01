@@ -1,0 +1,10 @@
+{
+  "bots": [
+    {
+      "botToken": "discordBotToken",
+      "botID": "discordAppID",
+      "symbolName": "BINANCE:name",
+      "symbolNick": "nickname"
+    }
+  ]
+}
