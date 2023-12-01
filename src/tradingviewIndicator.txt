@@ -1,0 +1,114 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © atraderstoolbox
+
+//@version=5
+indicator("DISCORD BOT - TICKERS", overlay = true)
+
+f_daily_data(symbol) =>
+    [current_price, pct_change, prior_close, prior_high, prior_low] = 
+         request.security(symbol, 'D', 
+         [close, 
+         math.round(( (close - close[1]) / close[1] ) * 100, 2),
+         close[1],
+         high[1],
+         low[1]
+         ])
+    [current_price, pct_change, prior_close, prior_high, prior_low]
+
+
+symbol1 = input.symbol('CME_MINI:ES1!')
+symbol2 = input.symbol('CME_MINI:NQ1!')
+symbol3 = input.symbol('CME_MINI:RTY1!')
+symbol4 = input.symbol('CBOT:YM1!')
+symbol5 = input.symbol('TVC:VIX')
+symbol6 = input.symbol('TVC:DXY')
+symbol7 = input.symbol('CBOT:UB1!')
+symbol8 = input.symbol('BINANCE:BTCUSDT')
+symbol9 = input.symbol('COMEX:GC1!')
+symbol10 = input.symbol('NYMEX:CL1!')
+
+
+[current_price1, pct_change1, prior_close1, prior_high1, prior_low1] = f_daily_data(symbol1)
+[current_price2, pct_change2, prior_close2, prior_high2, prior_low2] = f_daily_data(symbol2)
+[current_price3, pct_change3, prior_close3, prior_high3, prior_low3] = f_daily_data(symbol3)
+[current_price4, pct_change4, prior_close4, prior_high4, prior_low4] = f_daily_data(symbol4)
+[current_price5, pct_change5, prior_close5, prior_high5, prior_low5] = f_daily_data(symbol5)
+[current_price6, pct_change6, prior_close6, prior_high6, prior_low6] = f_daily_data(symbol6)
+[current_price7, pct_change7, prior_close7, prior_high7, prior_low7] = f_daily_data(symbol7)
+[current_price8, pct_change8, prior_close8, prior_high8, prior_low8] = f_daily_data(symbol8)
+[current_price9, pct_change9, prior_close9, prior_high9, prior_low9] = f_daily_data(symbol9)
+[current_price10, pct_change10, prior_close10, prior_high10, prior_low10] = f_daily_data(symbol10)
+
+var bool us_futures_open = false
+var bool crypto_open = false
+
+if barstate.islast
+
+    us_futures_open := str.format_time(time, 'HH:mm', 'America/New_York') == '18:00' 
+    crypto_open := str.format_time(time, 'HH:mm', 'America/New_York') == '19:00' 
+
+    alert('{"content" : "{^^stocks^^: [
+     {^^symbol^^: ^^' + symbol1 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price1) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change1) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close1) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high1) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low1) + '^^},
+     {^^symbol^^: ^^' + symbol2 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price2) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change2) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close2) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high2) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low2) + '^^},
+     {^^symbol^^: ^^' + symbol3 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price3) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change3) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close3) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high3) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low3) + '^^},
+     {^^symbol^^: ^^' + symbol4 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price4) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change4) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close4) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high4) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low4) + '^^},
+     {^^symbol^^: ^^' + symbol5 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price5) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change5) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close5) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high5) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low5) + '^^},
+     {^^symbol^^: ^^' + symbol6 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price6) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change6) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close6) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high6) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low6) + '^^},
+     {^^symbol^^: ^^' + symbol7 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price7) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change7) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close7) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high7) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low7) + '^^},
+     {^^symbol^^: ^^' + symbol8 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price8) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change8) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close8) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high8) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low8) + '^^},
+     {^^symbol^^: ^^' + symbol9 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price9) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change9) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close9) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high9) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low9) + '^^},
+     {^^symbol^^: ^^' + symbol10 + '^^, 
+         ^^price^^: ^^' + str.tostring(current_price10) + '^^, 
+         ^^pct_chg^^: ^^' + str.tostring(pct_change10) + '^^, 
+         ^^prior_close^^: ^^' + str.tostring(prior_close10) + '^^, 
+         ^^prior_high^^: ^^' + str.tostring(prior_high10) + '^^, 
+         ^^prior_low^^: ^^' + str.tostring(prior_low10) + '^^}],
+     ^^us_futures_open^^: ^^' + str.tostring(us_futures_open) + '^^,
+     ^^crypto_open^^: ^^' + str.tostring(crypto_open) + '^^
+     }"' 
+     + '}' , alert.freq_once_per_bar_close)
