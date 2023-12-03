@@ -47,8 +47,8 @@ sudo nano /etc/supervisor/conf.d/ticker_bots.conf
 ```bash
 [program:ticker_bots]
 user=bot_manager
-directory=/home/bot_manager/Documents/ticker_bots
-command=/home/bot_manager/Documents/ticker_bots/.venv/bin/python3.8 /home/bot_manager/Documents/ticker_bots/src/main.py
+directory=/home/bot_manager/code/ticker_bots
+command=/home/bot_manager/code/ticker_bots/.venv/bin/python3.8 /home/bot_manager/code/ticker_bots/src/main.py
 autostart=true
 autorestart=true
 stopasgroup=true
