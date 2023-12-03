@@ -45,17 +45,10 @@ sudo nano /etc/supervisor/conf.d/${botName}.conf
 ### 5. Sample Supervisor .conf
 
 ```bash
-<<<<<<< HEAD
 [program:ticker_bots]
 user=bot_manager
 directory=/home/bot_manager/code/ticker_bots
 command=/home/bot_manager/code/ticker_bots/.venv/bin/python3.8 /home/bot_manager/code/ticker_bots/src/main.py
-=======
-[program:${botName}]
-user=${vpsUsername}
-directory=/home/bot_manager/Documents/${botName}
-command=/home/bot_manager/Documents/${botName}/.venv/bin/python3.10 /home/bot_manager/Documents/${botName}/src/main.py
->>>>>>> 5820b41b44b46b9e09966e60db104a927e5c731f
 autostart=true
 autorestart=true
 stopasgroup=true
