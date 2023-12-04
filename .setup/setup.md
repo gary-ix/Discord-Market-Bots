@@ -12,7 +12,7 @@
 ```bash
 git clone https://github.com/theprogrammergary/Discord-Ticker-Bots
 
-cd Discord-Antispam-Bot
+cd Discord-Ticker-Bots
 ```
 
 ### 2. Run Server Setup Script
