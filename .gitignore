@@ -1,4 +1,5 @@
 .venv/
 *.bots.json
 *.env
+*.log
 *__pycache__
