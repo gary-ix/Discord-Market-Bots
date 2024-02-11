@@ -67,7 +67,7 @@ def start_bot(bot_identity: dict) -> None:
         base_url: str = "https://www.tradingview.com/chart/?theme=dark"
         symbol: str = f"&symbol={bot_identity['symbolName']}"
         interval: str = "&interval=1"
-        ref: str = "&ref=aff_id=133415"
+        ref: str = "&aff_id=133415"
         return f"{base_url}{symbol}{interval}{ref}"
 
     ticker.run(token=bot_identity["botToken"])
