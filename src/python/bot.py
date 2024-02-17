@@ -43,19 +43,25 @@ def start_bot(bot_identity: dict) -> None:
             f"**__{ticker.user.name if ticker.user else bot_identity['nickname']}__**"
         )
         app_info: discord.AppInfo = await ticker.application_info()
-        embed_description: str = app_info.description
         embed: discord.Embed = discord.Embed(
             title=embed_title,
-            description=embed_description,
             color=ticker.user.accent_color if ticker.user else 0x000000,
             url=ticker_url(),
         )
+        create_embed_fields(embed=embed, data=app_info.description)
 
         if ticker.user:
             if ticker.user.avatar:
                 embed.set_thumbnail(url=ticker.user.avatar.url)
 
         return embed
+
+    def create_embed_fields(embed: discord.Embed, data: str) -> None:
+        pairs: list[str] = [pair.strip() for pair in data.split(sep=",")]
+
+        for pair in pairs:
+            key, value = pair.split(sep="=")
+            embed.add_field(name=f"**__{key}__**", value=value, inline=True)
 
     def message_view() -> discord.ui.View:
         view = View()
@@ -64,9 +70,9 @@ def start_bot(bot_identity: dict) -> None:
         return view
 
     def ticker_url() -> str:
-        base_url: str = "https://www.tradingview.com/chart/?theme=dark"
+        base_url: str = "https://www.tradingview.com/chart/HIHGAUrW/?theme=dark"
         symbol: str = f"&symbol={bot_identity['symbolName']}"
-        interval: str = "&interval=1"
+        interval: str = "&interval=5"
         ref: str = "&aff_id=133415"
         return f"{base_url}{symbol}{interval}{ref}"
 
@@ -157,27 +163,20 @@ async def update_bots(data: dict) -> None:
             print(f"Error {e}")
 
     async def update_bot_bio(bot: dict, bio_info: dict) -> None:
-        today_levels: str = (
-            "**__Today's Levels__**"
-            f'\nH={bio_info["today_high"]}   '
-            f'L={bio_info["today_low"]}   '
-            f'O={bio_info["today_open"]}   '
-            f'ONH={bio_info["onh"]}   '
-            f'ONL={bio_info["onl"]}   '
-            f'IBH={bio_info["ibh"]}   '
-            f'IBL={bio_info["ibl"]}   '
-            f'VWAP={bio_info["vwap"]}   '
+        bio_update: str = (
+            f'RTH H={bio_info["rthH"]},   '
+            f'RTH L={bio_info["rthL"]},   '
+            f'RTH O={bio_info["rthO"]},   '
+            f'YH={bio_info["yh"]},   '
+            f'YL={bio_info["yl"]},   '
+            f'YC={bio_info["yc"]},   '
+            f'ONH={bio_info["onh"]},   '
+            f'ONL={bio_info["onl"]},   '
+            f'IBH={bio_info["ibh"]},   '
+            f'IBL={bio_info["ibl"]},   '
+            f'VWAP={bio_info["vwap"]},   '
             f'RVOL={bio_info["rvol"]}'
         )
-
-        yesterday_levels: str = (
-            "**__Yesterday's Levels__**"
-            f'\nH={bio_info["prior_high"]}   '
-            f'L={bio_info["prior_low"]}   '
-            f'C={bio_info["prior_close"]}'
-        )
-
-        bio_update: str = today_levels + "\n\n" + yesterday_levels
 
         url: str = f'https://discord.com/api/v9/applications/{bot["botID"]}'
         headers: dict[str, str] = {
