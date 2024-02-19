@@ -39,20 +39,12 @@ def start_bot(bot_identity: dict) -> None:
                 await message.reply(embed=await message_embed(), view=message_view())
 
     async def message_embed() -> discord.Embed:
-        embed_title: str = (
-            f"**__{ticker.user.name if ticker.user else bot_identity['nickname']}__**"
-        )
         app_info: discord.AppInfo = await ticker.application_info()
         embed: discord.Embed = discord.Embed(
-            title=embed_title,
             color=ticker.user.accent_color if ticker.user else 0x000000,
             url=ticker_url(),
         )
         create_embed_fields(embed=embed, data=app_info.description)
-
-        if ticker.user:
-            if ticker.user.avatar:
-                embed.set_thumbnail(url=ticker.user.avatar.url)
 
         return embed
 
@@ -164,9 +156,9 @@ async def update_bots(data: dict) -> None:
 
     async def update_bot_bio(bot: dict, bio_info: dict) -> None:
         bio_update: str = (
-            f'RTH H={bio_info["rthH"]},   '
-            f'RTH L={bio_info["rthL"]},   '
-            f'RTH O={bio_info["rthO"]},   '
+            f'RTH High={bio_info["rthH"]},   '
+            f'RTH Low={bio_info["rthL"]},   '
+            f'RTH Open={bio_info["rthO"]},   '
             f'YH={bio_info["yh"]},   '
             f'YL={bio_info["yl"]},   '
             f'YC={bio_info["yc"]},   '
