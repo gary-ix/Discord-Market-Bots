@@ -4,7 +4,8 @@ import os
 import threading
 
 from bot import start_discord_bots, update_bots
-from flask import Flask, abort, request  # pylint:disable = C0411
+from config import bot_log
+from flask import Flask, abort, request
 
 
 def startup() -> None:
@@ -29,7 +30,7 @@ def auth() -> None:
 @app.route(rule="/heartbeat", methods=["GET"])
 def heartbeat() -> str:
     """To quickly check if server is still alive"""
-    return "We are alive."
+    return "Alive"
 
 
 @app.route(rule="/6YVpcd3QEwkdADX51KG4czHLd3NVcFs9", methods=["POST"])
