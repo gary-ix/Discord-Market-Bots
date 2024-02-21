@@ -127,7 +127,7 @@ async def update_bots(data: dict) -> None:
             data: dict[str, str] = {"nick": status_info["name_update"]}
 
             response: requests.Response = requests.patch(
-                url=url, headers=headers, json=data, timeout=10
+                url=url, headers=headers, json=data, timeout=30
             )
             response.raise_for_status()
 
