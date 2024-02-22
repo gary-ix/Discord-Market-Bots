@@ -3,11 +3,12 @@
 # standard imports
 import threading
 
-import discord
 import requests
 
 # custom imports
-from config import bot_info, bot_log, guild_id, ticker_green, ticker_red
+from config.settings import bot_info, guild_id, ticker_green, ticker_red
+
+import discord
 from discord.ui import Button, View
 
 api: str = "https://discord.com/api/v9/guilds/"
@@ -28,7 +29,7 @@ def start_bot(bot_identity: dict) -> None:
     @ticker.event
     async def on_ready() -> None:
         if ticker.user:
-            bot_log.info(msg=f"{ticker.user.name} Bot ready!")
+            print(f"{ticker.user.name} Bot ready!")
             bot_clients[bot_identity["botID"]] = ticker
 
     @ticker.event
@@ -146,12 +147,10 @@ async def update_bots(data: dict) -> None:
             )
 
             if add.status_code == 429 or remove.status_code == 429:
-                bot_log.warning(
-                    f"{bot['symbolNick']} server update is being rate limited"
-                )
+                print(f"{bot['symbolNick']} server update is being rate limited")
 
         except requests.exceptions.RequestException as e:
-            bot_log.error(f"Error {e}")
+            print(f"Error {e}")
 
     async def update_bot_bio(bot: dict, bio_info: dict) -> None:
         bio_update: str = (
@@ -181,7 +180,7 @@ async def update_bots(data: dict) -> None:
         response.raise_for_status()
 
         if response.status_code == 429:
-            bot_log.warning(f"{bot['symbolNick']} bio update is being rate limited")
+            print(f"{bot['symbolNick']} bio update is being rate limited")
 
     async def update_presence(bot: dict, status_info: dict) -> None:
         bot_id: str = bot["botID"]
