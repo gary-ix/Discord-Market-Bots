@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 setup_path: str = os.path.join(os.getcwd(), ".setup")
 
 
-def get_bot_info() -> list[dict]:
+def get_bot_list() -> list[dict]:
     """
     Load bot information from a JSON file.
 
@@ -26,7 +26,7 @@ def get_bot_info() -> list[dict]:
 
 
 load_dotenv(dotenv_path=os.path.join(setup_path, ".env"))
-bot_info: list[dict] = get_bot_info()
+bot_list: list[dict] = get_bot_list()
 guild_id: int = int(os.getenv(key="GUILD_ID", default="0"))
 ticker_green: int = int(os.getenv(key="GREEN_ROLE_ID", default="0"))
 ticker_red: int = int(os.getenv(key="RED_ROLE_ID", default="0"))
