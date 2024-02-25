@@ -1,6 +1,7 @@
 """Discord Bots"""
 
 # standard imports
+import logging
 import threading
 
 import discord
@@ -8,15 +9,18 @@ import requests
 
 # custom imports
 from config.settings import bot_list, green_bot_role, guild_id, red_bot_role
+from config.utils import create_bot_logger
 from discord.ui import Button, View
 
 DISCORD_BOTS: dict = {}
+BOT_LOGGERS: dict = {}
 API_BASE_URL = "https://discord.com/api/v9/"
 
 
 class DiscordBot:
-    def __init__(self, bot_info) -> None:
+    def __init__(self, bot_info, bot_logger) -> None:
         self.bot: dict = bot_info
+        self.logger: logging.Logger = bot_logger
         self.client: discord.Client = discord.Client(
             intents=discord.Intents(messages=True)
         )
@@ -27,7 +31,7 @@ class DiscordBot:
         @self.client.event
         async def on_ready() -> None:
             if self.client.user:
-                print(f"{self.client.user.name} Bot ready!")
+                self.logger.debug(msg=f"{self.client.user.name} Bot ready!")
                 DISCORD_BOTS[self.bot["botID"]] = self.client
 
         @self.client.event
@@ -39,7 +43,16 @@ class DiscordBot:
                     )
 
     def run(self) -> None:
-        self.client.run(token=self.bot["botToken"], root_logger=True)
+        self.client.run(
+            token=self.bot["botToken"],
+            root_logger=False,
+            log_level=logging.ERROR,
+            log_handler=self.logger.handlers[0] if self.logger.handlers else None,
+            log_formatter=logging.Formatter(
+                fmt=f"\n\n{self.bot['symbolNick']} - %(asctime)s\n%(levelname)s - %(name)s\n%(filename)s>'%(funcName)s'>%(lineno)d\n%(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S",
+            ),
+        )
 
     async def message_embed(self) -> discord.Embed:
 
@@ -80,8 +93,12 @@ class BotManager:
     def start_bots(self) -> None:
         threads: list[threading.Thread] = []
         for bot in self.bot_list:
-            bot = DiscordBot(bot_info=bot)
-            thread = threading.Thread(target=bot.run)
+            bot_logger: logging.Logger = create_bot_logger(
+                bot_nickname=bot["symbolNick"]
+            )
+            BOT_LOGGERS[bot["symbolNick"]] = bot_logger
+            discord_bot = DiscordBot(bot_info=bot, bot_logger=bot_logger)
+            thread = threading.Thread(target=discord_bot.run, name=bot["symbolNick"])
             threads.append(thread)
             thread.start()
 
@@ -151,10 +168,12 @@ class BotManager:
                 )
 
                 if add.status_code == 429 or remove.status_code == 429:
-                    print(f"{bot['symbolNick']} server update is being rate limited")
+                    BOT_LOGGERS[bot["symbolNick"]].warning(
+                        f"{bot['symbolNick']} server update is being rate limited"
+                    )
 
             except requests.exceptions.RequestException as e:
-                print(f"Error {e}")
+                BOT_LOGGERS[bot["symbolNick"]].error(f"Error {e}")
 
         async def update_bot_bio(bot: dict, bot_data: dict) -> None:
             bio_update: str = (
@@ -184,7 +203,9 @@ class BotManager:
             response.raise_for_status()
 
             if response.status_code == 429:
-                print(f"{bot['symbolNick']} bio update is being rate limited")
+                BOT_LOGGERS[bot["symbolNick"]].warning(
+                    f"{bot['symbolNick']} server update is being rate limited"
+                )
 
         async def update_presence(bot: dict, bot_data: dict) -> None:
             bot_id: str = bot["botID"]
@@ -211,3 +232,6 @@ class BotManager:
             for bot in bot_list:
                 if bot["symbolName"] == raw_data["symbol"]:
                     await update_bot(bot=bot)
+                    BOT_LOGGERS[bot["symbolNick"]].info(
+                        f"{bot['symbolNick']} was updated."
+                    )

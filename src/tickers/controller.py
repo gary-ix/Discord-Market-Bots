@@ -1,17 +1,22 @@
 import asyncio
 import json
+import logging
 import os
 import threading
 from typing import Any
 
 import redis
 from bot import BotManager
+from config.utils import create_controller_logger
 
 
 class BotController:
     def __init__(self) -> None:
+        self.logger: logging.Logger = create_controller_logger()
         self.bot_manager: BotManager = BotManager()
         self.redis: redis.Redis = self.initialize_redis()
+
+        self.logger.info(msg="Bot Controller setup is complete")
 
     def initialize_redis(self) -> redis.Redis:
         r: redis.Redis | None = redis.Redis.from_url(
@@ -19,10 +24,14 @@ class BotController:
         )
 
         if not r:
+            self.logger.critical(msg="REDIS IS NONE ERROR.")
             raise Exception("REDIS IS NONE ERROR.")
+
         if not r.ping():
+            self.logger.critical(msg="COULD NOT CONNECT TO REDIS.")
             raise Exception("COULD NOT CONNECT TO REDIS.")
 
+        self.logger.info(msg="Redis is ready.")
         return r
 
     async def redis_message_handler(self) -> None:
@@ -34,6 +43,7 @@ class BotController:
                 message["type"] == "message"
                 and message["channel"].decode() == "ticker_updates"
             ):
+                self.logger.info(msg="New ticker update message received")
                 await self.bot_manager.update_bots(
                     data=json.loads(message["data"].decode())
                 )
