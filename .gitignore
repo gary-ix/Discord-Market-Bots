@@ -1,6 +1,13 @@
+# server
 .venv/
 logs/
-*.bots.json
 *.env
 *.log
 *__pycache__
+
+
+# bots
+node_modules/
+dist/
+bots.json
+.DS_Store

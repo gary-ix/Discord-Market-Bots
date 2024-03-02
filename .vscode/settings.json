@@ -1,3 +1,12 @@
 {
-  "pylint.cwd": "${workspaceFolder}/src/python"
+  "pylint.cwd": "${workspaceFolder}/services/server",
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  }
 }
