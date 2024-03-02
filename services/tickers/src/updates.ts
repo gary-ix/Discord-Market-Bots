@@ -3,10 +3,6 @@ import axios from "axios";
 import { Bot } from "./types";
 import logger from "./logger";
 
-// TODO:
-// update tradingview webhook url
-//push to git
-
 export async function updateDiscordBot(client: Client, bot: Bot, data: any) {
   const botData = cleanBotData(bot, data)
 
