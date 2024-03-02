@@ -1,0 +1,52 @@
+version: '3.8'
+
+name: discord-bot-tickers
+services:
+  redis:
+    image: redis
+    command: >
+      --requirepass ${REDIS_PASSWORD}
+    networks:
+      - app-network
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/logs:/app/logs
+    restart: always
+
+  server:
+    image: server
+    build: 
+      context: .
+      dockerfile: dockerfile.server
+    depends_on:
+      - redis
+    networks:
+      - app-network
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server/logs:/app/logs
+    restart: always
+
+  tickers:
+    image: tickers
+    build:
+      context: .
+      dockerfile: dockerfile.tickers
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      - redis
+      - server
+    networks:
+      - app-network
+    volumes:
+      - ./tickers/logs:/app/logs
+    restart: always
+
+
+
+networks:
+  app-network:
+      driver: bridge
