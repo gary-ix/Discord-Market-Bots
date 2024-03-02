@@ -1,0 +1,14 @@
+FROM node:18-slim
+
+WORKDIR /app
+
+COPY ./tickers/package*.json ./
+RUN npm install --omit=dev && npm cache clean --force && npm install -g typescript
+
+
+COPY ./tickers .
+
+RUN npm run build
+
+CMD ["node", "dist/index.js"]
+
