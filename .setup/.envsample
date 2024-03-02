@@ -1,8 +1,0 @@
-REDIS_URL=redis://pass@localhost:6379
-
-WEBHOOK_CHANNEL_ID = ""
-WEBHOOK_SECRET = ""
-
-GUILD_ID = ""
-GREEN_ROLE_ID = ""
-RED_ROLE_ID = ""
