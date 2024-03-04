@@ -4,13 +4,14 @@
 
 Get a glimpse of financial market data directly in discord. Data updates once per minute and provides current price, daily percentage change, and more.
 
-### 📜 [Server Setup Guide](/.setup/setup.md)
+### 📜 [Setup Guide](/.setup/setup.md)
 
 ### 📜 [Bot Setup Guide](/.setup/botSetup.md)
 
 ![Sample](final.png)
 
 <br></br>
+
 <div style='display: flex; align-items: center;'>
   <a href='mailto:theprogrammergary@gmail.com' target='_blank'>
     <span style='margin-left: 8px; margin-right: 8px;'>Contact for hire</span>
