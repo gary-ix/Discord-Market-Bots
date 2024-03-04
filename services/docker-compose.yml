@@ -45,6 +45,19 @@ services:
       - ./tickers/logs:/app/logs
     restart: always
 
+  market-wiz:
+    image: market-wiz
+    build:
+      context: .
+      dockerfile: dockerfile.marketwiz
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+    volumes:
+      - ./market-wiz/logs:/app/logs
+    restart: always
+    platform: linux/amd64
+
 
 
 networks:
