@@ -10,6 +10,33 @@ import {
 import axios from "axios";
 import logger from "../utils/logger";
 
+interface Event {
+  id: string;
+  title: string;
+  country: string;
+  indicator: string;
+  ticker: string;
+  comment: string;
+  category: string;
+  period: string;
+  source: string;
+  source_url: string;
+  actual: number | null;
+  previous: number | null;
+  forecast: number | null;
+  actualRaw: number | null;
+  previousRaw: number | null;
+  forecastRaw: number | null;
+  currency: string;
+  scale: string;
+  importance: number;
+  date: string;
+}
+
+type EventsGroupedByDate = {
+  [date: string]: Event[];
+};
+
 const countryOptions = {
   "US": "USA",
 };
@@ -25,6 +52,42 @@ const importanceOptions = {
   "High": "🔴",
   "Medium": "🔴🟠",
   "Low": "🔴🟠🟡",
+}
+
+const getImportanceInt = (importance: string) => {
+  if (importance === "High") return 1;
+  if (importance === "Medium") return 0;
+  return -1;
+};
+
+const getColorForImportance = (importance: number, title: string) => {
+  if (title.toLowerCase().includes("fed")) return "🔵";
+  if (importance === -1) return "🟡";
+  if (importance === 0) return "🟠";
+  if (importance === 1) return "🔴";
+  return "⚪️";
+};
+
+const getCountryFlag = (countryName: string) => {
+  if (countryName === "US") return "🇺🇸";
+  return "";
+}
+
+const getTimeDelta = (eventDate: string): string => {
+  const currentDate = new Date();
+  const targetDate = new Date(eventDate);
+  const deltaMilliseconds = targetDate.getTime() - currentDate.getTime();
+  const deltaMinutes = Math.round(deltaMilliseconds / (1000 * 60));
+
+  let timeDelta: string;
+  if (deltaMinutes < 60) {
+    timeDelta = `${deltaMinutes} minute${deltaMinutes !== 1 ? "s" : ""} from now`;
+  } else {
+    const deltaHours = Math.floor(deltaMinutes / 60);
+    timeDelta = `${deltaHours} hour${deltaHours !== 1 ? "s" : ""} from now`;
+  }
+
+  return timeDelta;
 }
 
 export const data = new SlashCommandBuilder()
@@ -117,32 +180,12 @@ async function fetchNewsData(params: { country: string, timeframe: string, impor
   }
 }
 
-const getImportanceInt = (importance: string) => {
-  if (importance === "High") return 1;
-  if (importance === "Medium") return 0;
-  return -1;
-};
-
-const getColorForImportance = (importance: number, title: string) => {
-  if (title.toLowerCase().includes("fed")) return "🔵";
-  if (importance === -1) return "🟡";
-  if (importance === 0) return "🟠";
-  if (importance === 1) return "🔴";
-  return "⚪️";
-};
-
-const getCountryFlag = (countryName: string) => {
-  if (countryName === "US") return "🇺🇸";
-  return "";
-}
-
 async function createNewsEmbed(params: { country: string, timeframe: string, importance: string }) {
-  const minImportanceNumber = getImportanceInt(params.importance);
   const data = await fetchNewsData(
     {
       country: params.country,
       timeframe: params.timeframe,
-      importance: minImportanceNumber
+      importance: getImportanceInt(params.importance)
     });
   if (!data) return null;
 
@@ -156,14 +199,30 @@ async function createNewsEmbed(params: { country: string, timeframe: string, imp
     })
 
   if (data && data.result && data.result.length > 0) {
-    const maxFields = Math.min(data.result.length, 25);
-    for (let i = 0; i < maxFields; i++) {
-      const event = data.result[i];
-      const eventDate = new Date(event.date);
-      const currentDate = new Date();
-      const deltaMinutes = Math.round((eventDate.getTime() - currentDate.getTime()) / (1000 * 60));
+    const events: Event[] = data.result;
+    const eventsGroupedByDate = events.reduce<EventsGroupedByDate>((acc, event) => {
+      const eventDatetime = event.date;
+      if (!acc[eventDatetime]) {
+        acc[eventDatetime] = [];
+      }
+      acc[eventDatetime].push(event);
 
-      const date = new Date(event.date).toLocaleTimeString("en-US", {
+      return acc;
+    }, {});
+
+    let fieldsAdded = 0;
+    for (const datetime in eventsGroupedByDate) {
+      if (fieldsAdded >= 25) break;
+
+      const events = eventsGroupedByDate[datetime];
+      let eventDescriptions = events.map(event =>
+        `${getCountryFlag(event.country)} ${getColorForImportance(event.importance, event.title)} - ${event.title}`).join("\n");
+
+      if (eventDescriptions.length > 1024) {
+        eventDescriptions = eventDescriptions.substring(0, 1021) + "...";
+      }
+
+      const date = new Date(datetime).toLocaleTimeString("en-US", {
         month: "long",
         day: "numeric",
         hour: "2-digit",
@@ -171,27 +230,13 @@ async function createNewsEmbed(params: { country: string, timeframe: string, imp
         timeZone: "America/New_York"
       });
 
-      let timeDelta;
-      if (deltaMinutes < 60) {
-        timeDelta = `${deltaMinutes} minute${deltaMinutes !== 1 ? "s" : ""} from now`;
-      } else {
-        const deltaHours = Math.floor(deltaMinutes / 60);
-        timeDelta = `${deltaHours} hour${deltaHours !== 1 ? "s" : ""} from now`;
-      }
-
-      const importanceColor = getColorForImportance(event.importance, event.title);
-      const countryFlag = getCountryFlag(event.country);
-      const prev = event.previous ? event.previous : " ";
-      const forecast = event.forecast ? event.forecast : " ";
-
       embed.addFields(
         {
-          name: `**__${importanceColor} ${event.title} __**`,
-          value: (
-            `- ${date} (${timeDelta})\n- Previous: ${prev}  |  Forecast: ${forecast}\n- Country ${countryFlag}`
-          ),
+          name: `**__ ${date}__**__  -  *(${getTimeDelta(datetime)})*__`,
+          value: eventDescriptions,
           inline: false
         });
+      fieldsAdded++;
     }
   } else {
     embed.setDescription("*No news events were found to be scheduled with your selected criteria.*");
