@@ -1,8 +1,8 @@
 import { ActivityType, Client, Events, GatewayIntentBits } from "discord.js";
-import logger from "./logger";
-import { config } from "./config";
+import logger from "./utils/logger";
+import { config } from "./utils/config";
 import { commands } from "./commands";
-import { deployCommands, deployCommandsToAll } from "./deploy";
+import { deployCommands, deployCommandsToAll } from "./utils/deploy";
 
 // Initialize the bot
 const client = new Client({

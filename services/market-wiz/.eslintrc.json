@@ -13,7 +13,7 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": ["./services/market-wiz/tsconfig.json", "./services/tickers/tsconfig.dev.json"],
+    "project": ["./services/market-wiz/tsconfig.json"],
     "sourceType": "module"
   },
   "ignorePatterns": [".eslintrc.js", "/lib/**/*"],

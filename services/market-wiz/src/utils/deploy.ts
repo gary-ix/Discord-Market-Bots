@@ -1,7 +1,7 @@
 import { REST, Routes } from "discord.js";
 import { config } from "./config";
 import logger from "./logger";
-import { commands } from "./commands";
+import { commands } from "../commands";
 
 type DeployCommandsProps = {
   guildId: string;

@@ -8,7 +8,7 @@ import {
   SlashCommandBuilder
 } from "discord.js";
 import axios from "axios";
-import logger from "../logger";
+import logger from "../utils/logger";
 
 const countryOptions = {
   "US": "USA",
@@ -137,12 +137,12 @@ const getCountryFlag = (countryName: string) => {
 }
 
 async function createNewsEmbed(params: { country: string, timeframe: string, importance: string }) {
-  const importanceNumber = getImportanceInt(params.importance);
+  const minImportanceNumber = getImportanceInt(params.importance);
   const data = await fetchNewsData(
     {
       country: params.country,
       timeframe: params.timeframe,
-      importance: importanceNumber
+      importance: minImportanceNumber
     });
   if (!data) return null;
 
@@ -179,7 +179,7 @@ async function createNewsEmbed(params: { country: string, timeframe: string, imp
         timeDelta = `${deltaHours} hour${deltaHours !== 1 ? "s" : ""} from now`;
       }
 
-      const importanceColor = getColorForImportance(importanceNumber, event.title);
+      const importanceColor = getColorForImportance(event.importance, event.title);
       const countryFlag = getCountryFlag(event.country);
       const prev = event.previous ? event.previous : " ";
       const forecast = event.forecast ? event.forecast : " ";

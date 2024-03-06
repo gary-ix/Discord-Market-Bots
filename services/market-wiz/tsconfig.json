@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "incremental": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "dist",

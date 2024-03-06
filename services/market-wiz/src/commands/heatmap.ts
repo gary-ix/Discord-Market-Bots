@@ -1,6 +1,6 @@
 import { APIApplicationCommandOptionChoice, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import puppeteer, { Browser } from "puppeteer";
-import logger from "../logger";
+import logger from "../utils/logger";
 
 const marketOptions = {
   "SPX500": "S&P 500",
