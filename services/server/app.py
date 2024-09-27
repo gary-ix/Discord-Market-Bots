@@ -54,3 +54,6 @@ async def ticker_data() -> tuple[str, int]:
     if request.json:
         r.publish(channel="ticker_updates", message=json.dumps(obj=request.json))
     return "Webhook received successfully", 200
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
