@@ -8,7 +8,8 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
-      - app-network
+      app-network:
+        ipv4_address: 172.30.0.2
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -28,7 +29,7 @@ services:
     restart: always
     networks:
       app-network:
-        ipv4_address: 172.20.0.3
+        ipv4_address: 172.30.0.3
 
   tickers:
     image: tickers
@@ -46,7 +47,8 @@ services:
       - ./tickers/logs:/app/logs
     restart: always
     networks:
-      - app-network
+      app-network:
+        ipv4_address: 172.30.0.4
 
   market-wiz:
     image: market-wiz
@@ -64,7 +66,8 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - app-network
+      app-network:
+        ipv4_address: 172.30.0.5
 
   cloudflare-tunnel:
     image: cloudflare/cloudflared:latest
@@ -73,7 +76,8 @@ services:
       - CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     restart: always
     networks:
-      - app-network
+      app-network:
+        ipv4_address: 172.30.0.6
 
 networks:
   app-network:
@@ -81,7 +85,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.20.0.0/16
-          gateway: 172.20.0.1
+        - subnet: 172.30.0.0/16
+          gateway: 172.30.0.1
 
 
