@@ -8,8 +8,7 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
-      app-network:
-        ipv4_address: 172.20.0.2
+      - app-network
 
   server:
     image: server
@@ -39,8 +38,7 @@ services:
       - ./tickers/logs:/app/logs
     restart: always
     networks:
-      app-network:
-        ipv4_address: 172.20.0.4
+      - app-network
 
   market-wiz:
     image: market-wiz
@@ -57,8 +55,7 @@ services:
     depends_on:
       - redis
     networks:
-      app-network:
-        ipv4_address: 172.20.0.5
+      - app-network
 
   cloudflare-tunnel:
     image: cloudflare/cloudflared:latest
@@ -67,8 +64,7 @@ services:
       - CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     restart: always
     networks:
-      app-network:
-        ipv4_address: 172.20.0.6
+      - app-network
 
 networks:
   app-network:
