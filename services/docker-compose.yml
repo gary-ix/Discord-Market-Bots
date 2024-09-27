@@ -3,13 +3,13 @@ version: '3.8'
 name: discord-bot-tickers
 services:
   redis:
-    image: redis
-    command: >
-      --requirepass ${REDIS_PASSWORD}
-    network_mode: "host"
-    volumes:
-      - ./redis/logs:/app/logs
-    restart: always
+    image: redis:latest
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.2
 
   server:
     image: server
@@ -18,10 +18,12 @@ services:
       dockerfile: dockerfile.server
     depends_on:
       - redis
-    network_mode: "host"
     volumes:
       - ./server/logs:/app/logs
     restart: always
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.3
 
   tickers:
     image: tickers
@@ -33,10 +35,12 @@ services:
     depends_on:
       - redis
       - server
-    network_mode: "host"
     volumes:
       - ./tickers/logs:/app/logs
     restart: always
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.4
 
   market-wiz:
     image: market-wiz
@@ -50,6 +54,11 @@ services:
       - ./market-wiz/logs:/app/logs
     restart: always
     platform: linux/amd64
+    depends_on:
+      - redis
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.5
 
   cloudflare-tunnel:
     image: cloudflare/cloudflared:latest
@@ -57,10 +66,17 @@ services:
     environment:
       - CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     restart: always
-    network_mode: "host"
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.6
 
 networks:
   app-network:
-      driver: bridge
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
 
 

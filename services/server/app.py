@@ -13,12 +13,15 @@ from flask import Flask, abort, request
 def initialize_app() -> tuple[redis.Redis, str]:
     load_dotenv(dotenv_path=os.path.join(os.getcwd(), ".env"))
 
-    r: redis.Redis = redis.Redis(
-        host="redis",
-        port=6379,
-        db=0,
-        password=os.getenv(key="REDIS_PASSWORD", default=""),
-    )
+    # r: redis.Redis = redis.Redis(
+    #     host="redis",
+    #     port=6379,
+    #     db=0,
+    #     password=os.getenv(key="REDIS_PASSWORD", default=""),
+    # )
+
+    r = redis.Redis(host='redis', port=6379, db=0, password=os.getenv('REDIS_PASSWORD'))
+
     if not r:
         raise Exception("REDIS IS NONE ERROR")
 
