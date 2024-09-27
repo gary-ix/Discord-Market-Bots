@@ -22,7 +22,7 @@ cd Discord-Ticker-Bots/services
 ### 2. Set .env vars and bots.json info
 
 ```bash
-sudo nano ./.env
+sudo nano ./services/.env
 sudo nano ./tickers/bots.json
 ```
 ---
