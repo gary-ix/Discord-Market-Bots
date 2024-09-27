@@ -19,13 +19,12 @@ cd Discord-Ticker-Bots/services
 
 ---
 
-### 2. Create .env and setup vars
+### 2. Set .env vars and bots.json info
 
 ```bash
-touch .env
 sudo nano ./.env
+sudo nano ./tickers/bots.json
 ```
-
 ---
 
 ### 3. Run Docker Compose
