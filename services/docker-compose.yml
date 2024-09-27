@@ -6,8 +6,7 @@ services:
     image: redis
     command: >
       --requirepass ${REDIS_PASSWORD}
-    networks:
-      - app-network
+    network_mode: "host"
     ports:
       - "6379:6379"
     volumes:
@@ -21,8 +20,7 @@ services:
       dockerfile: dockerfile.server
     depends_on:
       - redis
-    networks:
-      - app-network
+    network_mode: "host"
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
@@ -39,8 +37,7 @@ services:
     depends_on:
       - redis
       - server
-    networks:
-      - app-network
+    network_mode: "host"
     volumes:
       - ./tickers/logs:/app/logs
     restart: always
