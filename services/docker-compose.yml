@@ -9,6 +9,11 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   server:
     image: server
@@ -16,7 +21,8 @@ services:
       context: .
       dockerfile: dockerfile.server
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     volumes:
       - ./server/logs:/app/logs
     restart: always
@@ -32,8 +38,10 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     depends_on:
-      - redis
-      - server
+      redis:
+        condition: service_healthy
+      server:
+        condition: service_started
     volumes:
       - ./tickers/logs:/app/logs
     restart: always
@@ -53,7 +61,8 @@ services:
     restart: always
     platform: linux/amd64
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     networks:
       - app-network
 
