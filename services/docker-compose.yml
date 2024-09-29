@@ -1,5 +1,3 @@
-version: '3.8'
-
 name: discord-bot-tickers
 services:
   redis:
@@ -31,6 +29,8 @@ services:
     networks:
       app-network:
         ipv4_address: 172.20.0.3
+    ports:
+      - "8000:8000"  # Maps host port 8000 to container port 8000
 
   tickers:
     image: tickers
@@ -76,6 +76,8 @@ services:
     environment:
       - CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     restart: always
+    profiles:
+      - ${ENVIRONMENT:-prod} 
     networks:
       app-network:
         ipv4_address: 172.20.0.6
