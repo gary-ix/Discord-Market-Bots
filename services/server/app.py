@@ -8,17 +8,11 @@ import os
 import redis
 from dotenv import load_dotenv
 from flask import Flask, abort, request
-
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 def initialize_app() -> tuple[redis.Redis, str]:
     load_dotenv(dotenv_path=os.path.join(os.getcwd(), ".env"))
-
-    # r: redis.Redis = redis.Redis(
-    #     host="redis",
-    #     port=6379,
-    #     db=0,
-    #     password=os.getenv(key="REDIS_PASSWORD", default=""),
-    # )
 
     r = redis.Redis(host='redis', port=6379, db=0, password=os.getenv('REDIS_PASSWORD'))
 
@@ -34,7 +28,11 @@ def initialize_app() -> tuple[redis.Redis, str]:
 
 r, webhook_secret = initialize_app()
 app: Flask = Flask(import_name=__name__)
-
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["10 per minute", "200 per hour"]
+)
 
 @app.before_request
 def auth() -> None:
