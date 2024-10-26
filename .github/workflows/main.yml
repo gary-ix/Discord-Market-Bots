@@ -15,6 +15,6 @@ jobs:
           username: ${{secrets.SSH_USERNAME}} # User of the server you want to ssh into
           script: |
             cd code/discord-market-bots/services
-            git pull
+            git pull discord-market-bots:theprogrammergary/discord-market-bots.git
             docker compose up --build -d
             echo 'Deployment successful'
