@@ -44,6 +44,7 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: CommandInteraction) {
   const market = interaction.options.get("market")?.value?.toString();
   const timeframe = interaction.options.get("timeframe")?.value?.toString();
+  
   const marketName = marketOptions[market as keyof typeof marketOptions];
   const timeframeName = timeframeOptions[timeframe as keyof typeof timeframeOptions];
 

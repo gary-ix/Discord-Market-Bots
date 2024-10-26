@@ -3,7 +3,8 @@ import logger from "./utils/logger";
 import { config } from "./utils/config";
 import { commands } from "./commands";
 import { deployCommands, deployCommandsToAll } from "./utils/deploy";
-import { newsHeadline } from "./services/news-headline";
+import { newsHeadline } from "./services/news/news-headline";
+import { setupNewsCalendar } from "./services/news/news-calendar";
 
 // Initialize the bot
 const client = new Client({
@@ -18,6 +19,7 @@ client.on(Events.ClientReady, () => {
   client.user?.setActivity("🧙🏻‍♂️ Summoning Market Info", { type: ActivityType.Custom });
   logger.info(`Logged in as ${client.user?.tag}!`);
   deployCommandsToAll();
+  setupNewsCalendar(client);
 });
 client.on(Events.Debug, (m) => logger.debug(m));
 client.on(Events.Warn, (m) => logger.warn(m));
@@ -39,16 +41,8 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
 
 
 client.on(Events.MessageCreate, async (message: Message) => {
-  if (message.author.bot) return;
-
-
-  // Check if message comes from news webhook bot
-  //  && message.author.id === "1240686103959179274"
-  if (message.channelId === "1248771982980284436") {
+  if (message.channelId === "1248771982980284436" && message.author.id === "1240686103959179274") {
     await newsHeadline(message);
-
-    // reply to the message
-    // await message.reply("News headline received");
   }
 });
 

@@ -14,7 +14,7 @@ export async function newsHeadline(message: Message, ) {
   const isImportant = message.content.includes("🔴");
   switch (isImportant) {
     case true:
-      embed.setTitle("🚨 Breaking News");
+      embed.setTitle("🚨 BREAKING NEWS");
       embed.setColor(0xFF0000);
       embed.setDescription(message.content.replace("🔴", "").trim());
       break;
