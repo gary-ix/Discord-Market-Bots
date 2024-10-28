@@ -31,7 +31,7 @@ export async function checkNewsCalendar(client: Client) {
 
 export function setupNewsCalendar(client: Client) {
 
-  const INTERVAL_MINUTES = 1;   
+  const INTERVAL_MINUTES = 5;   
   const MS_IN_MINUTE = 60000;
   const RUNTIME_INTERVAL = INTERVAL_MINUTES * MS_IN_MINUTE;
 
