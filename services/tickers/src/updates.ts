@@ -18,8 +18,10 @@ export async function updateDiscordBot(client: Client, bot: Bot, data: any) {
     const member = await guild.members.fetch(client.user.id);
     member.setNickname(botData.nameUpdate);
 
-    const addRole = guild.roles.cache.find(role => role.name === botData.addRole);
-    const removeRole = guild.roles.cache.find(role => role.name === botData.removeRole);
+    // const addRole = guild.roles.cache.find(role => role.name === botData.addRole);
+    // const removeRole = guild.roles.cache.find(role => role.name === botData.removeRole);
+    const addRole = (await guild.roles.fetch()).find(role => role.name === botData.addRole);
+    const removeRole = (await guild.roles.fetch()).find(role => role.name === botData.removeRole);
 
     if (!addRole) {
       console.log(`Role ${addRole} not found in ${guild.name}`);
