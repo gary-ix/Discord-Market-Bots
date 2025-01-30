@@ -33,6 +33,13 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
   if (!interaction.isCommand()) {
     return;
   }
+  
+  // Check if the interaction is from a guild (server) and not a DM
+  if (!interaction.guild) {
+    await interaction.reply({ content: 'Commands can only be used in servers, not in DMs.', ephemeral: true });
+    return;
+  }
+
   const { commandName } = interaction;
   if (commands[commandName as keyof typeof commands]) {
     commands[commandName as keyof typeof commands].execute(interaction);
